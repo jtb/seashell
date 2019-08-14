@@ -3,6 +3,8 @@ var camera;
 var cube;
 var renderer;
 var controls;
+var gui;
+var params;
 
 window.onload = function() {
   init();
@@ -17,6 +19,17 @@ window.onload = function() {
 function init() {
   // Create an empty scene
   scene = new THREE.Scene();
+
+  // Add GUI for parameters
+  gui = new dat.gui.GUI({
+	  height : 5 * 32 - 1
+  });
+
+  params = {
+      interation: 5000
+  };
+
+  gui.add(params, 'interation');
 
   // Create a basic perspective camera
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -36,6 +49,9 @@ function init() {
 
   // Append Renderer to DOM
   document.body.appendChild( renderer.domElement );
+
+  // Helper for resizing window
+  THREEx.WindowResize(renderer, camera);
 };
 
 // ------------------------------------------------
