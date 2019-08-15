@@ -4,7 +4,8 @@ var cube;
 var renderer;
 var controls;
 var gui;
-var params;
+var options;
+var box;
 
 window.onload = function() {
   init();
@@ -21,22 +22,35 @@ function init() {
   scene = new THREE.Scene();
 
   // Add GUI for parameters
-  gui = new dat.gui.GUI({
-	  height : 5 * 32 - 1
-  });
-
-  params = {
-      interation: 5000
+  //gui = new dat.gui.GUI({
+  //  height : 5 * 32 - 1
+  //});
+  gui = new dat.gui.GUI();
+  box = gui.addFolder('Cube');
+  //params = {
+  //   width: 200
+  //};
+  options = {
+      reset: function() {
+	  //this.velx = 0.1;
+	  //this.vely = 0.1;
+	  //camera.position.z = 4;
+	  //camera.position.x = 10;
+	  //camera.position.y = 0;
+          controls.reset();
+	  cube.scale.x = 1;
+	  cube.scale.y = 1;
+	  cube.scale.z = 1;
+	  cube.material.wireframe = false;
+      }
   };
+  gui.add(options, 'reset');
 
-  gui.add(params, 'interation');
+  //gui.add(params, 'width').min(128).max(256).step(16);
 
   // Create a basic perspective camera
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
   camera.position.z = 4;
-
-  // Set up trackball.
-  controls = new THREE.TrackballControls(camera);
 
   // Create a renderer with Antialiasing
   renderer = new THREE.WebGLRenderer({antialias:true});
@@ -52,6 +66,11 @@ function init() {
 
   // Helper for resizing window
   THREEx.WindowResize(renderer, camera);
+
+  // Set up trackball.
+  //controls = new THREE.TrackballControls(camera, renderer.domElement);
+  controls = new THREE.OrbitControls( camera, renderer.domElement );
+
 };
 
 // ------------------------------------------------
@@ -63,6 +82,12 @@ function draw() {
   var geometry = new THREE.BoxGeometry( 1, 1, 1 );
   var material = new THREE.MeshBasicMaterial( { color: "#433F81" } );
   cube = new THREE.Mesh( geometry, material );
+
+  box.add(cube.scale, 'x', 0, 3).name('Width').listen();
+  box.add(cube.scale, 'y', 0, 3).name('Height').listen();
+  box.add(cube.scale, 'z', 0, 3).name('Length').listen();
+  box.add(cube.material, 'wireframe').listen();
+  box.open();
 
   // Add cube to Scene
   scene.add( cube );
