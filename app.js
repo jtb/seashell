@@ -6,6 +6,7 @@ var controls;
 var gui;
 var options;
 var box;
+var geometry;
 
 window.onload = function() {
   init();
@@ -31,6 +32,7 @@ function init() {
   //   width: 200
   //};
   options = {
+      blah: 2.25,
       reset: function() {
 	  //this.velx = 0.1;
 	  //this.vely = 0.1;
@@ -79,7 +81,8 @@ function init() {
 
 function draw() {
   // Create a Cube Mesh with basic material
-  var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  //var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  geometry = new THREE.ParametricGeometry(THREE.SpiralGeometries.mobius4d(options.blah), 20, 20);
   var material = new THREE.MeshBasicMaterial( { color: "#433F81" } );
   cube = new THREE.Mesh( geometry, material );
 
@@ -87,6 +90,7 @@ function draw() {
   box.add(cube.scale, 'y', 0, 3).name('Height').listen();
   box.add(cube.scale, 'z', 0, 3).name('Length').listen();
   box.add(cube.material, 'wireframe').listen();
+  box.add(options, 'blah', 0, 3).name('blah').onChange(generateGeometry);
   box.open();
 
   // Add cube to Scene
@@ -104,3 +108,12 @@ function render() {
   // Render the scene
   renderer.render(scene, camera);
 };
+
+
+function generateGeometry() {
+    // console.log(cube);
+    geometry = new THREE.ParametricGeometry(THREE.SpiralGeometries.mobius4d(options.blah), 20, 20);
+    cube.geometry.dispose();
+    cube.geometry = geometry;
+};
+ 
